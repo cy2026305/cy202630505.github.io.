@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中轴同心——北京中轴线</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            font-family: "KaiTi", "楷体", serif;
+            color: #000;
+        }
+        /* H5容器，全屏 */
+        #h5-wrap {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        .page {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+            background-size: cover;
+            background-position: center;
+        }
+        .page.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 第1页 封面 */
+        #page1 {
+            background-color: #991010;
+            background-image: url("");
+            background: linear-gradient(#b81818,#700808);
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+        }
+        .title-vertical {
+            font-size: 48px;
+            writing-mode: vertical-rl;
+            color: #ffd700;
+            -webkit-text-stroke:1px #000;
+            transform: translateY(120vh);
+            transition: transform 1.2s ease-out;
+        }
+        #page1.active .title-vertical {
+            transform: translateY(0);
+        }
+        .arrow-down {
+            position:absolute;
+            bottom:80px;
+            font-size:60px;
+            color:#ffd700;
+            -webkit-text-stroke:1px #000;
+            transform: translateY(150vh);
+            transition: transform 1.2s 0.4s ease-out;
+            cursor:pointer;
+        }
+        #page1.active .arrow-down {
+            transform: translateY(0);
+        }
+
+        /* 第2页 简介 */
+        #page2{
+            background:linear-gradient(to right,#941414,#3c0606);
+            display:flex;
+            align-items:center;
+            padding:0 24px;
+        }
+        .text-box{
+            width:48%;
+        }
+        .text-gold{
+            color:#ffd700;
+            -webkit-text-stroke:0.5px #000;
+            font-size:20px;
+            line-height:2;
+        }
+        .map-placeholder{
+            width:48%;
+            height:60vh;
+            border:2px solid gold;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#ffd700;
+        }
+
+        /* 第3页 钟鼓楼 */
+        #page3{
+            background:#222;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            padding:30px;
+        }
+        .type-text{
+            color:#ffd700;
+            -webkit-text-stroke:0.5px black;
+            font-size:22px;
+            line-height:2.2;
+            opacity:0;
+        }
+
+        /* 第4页 太庙社稷坛 */
+        #page4{
+            background:#2b1010;
+            display:flex;
+            height:100vh;
+        }
+        .col-half{
+            width:50%;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            padding:16px;
+        }
+        .img-placeholder{
+            width:80%;
+            height:45vh;
+            border:1px solid gold;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#ffd700;
+            margin-bottom:20px;
+        }
+        .center-text{
+            position:absolute;
+            left:50%;
+            top:50%;
+            transform:translate(-50%,-50%);
+            color:#ffd700;
+            font-size:24px;
+            writing-mode:vertical-rl;
+        }
+
+        /* 第5页 故宫 画轴展开 */
+        #page5{
+            background:#1a1212;
+            overflow:hidden;
+        }
+        .scroll-wrap{
+            width:100%;
+            height:100%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+        .scroll-paper{
+            width:0%;
+            height:70vh;
+            background:#fff8dc;
+            transition: width 2s ease;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+        #page5.active .scroll-paper{
+            width:85%;
+        }
+        .scroll-text{
+            writing-mode:vertical-rl;
+            font-size:20px;
+            line-height:2.4;
+            opacity:0;
+            transition:opacity 1.5s 1.5s;
+        }
+        #page5.active .scroll-text{
+            opacity:1;
+        }
+
+        /* 第6页 永定门 */
+        #page6{
+            background:#221414;
+            display:flex;
+            align-items:center;
+            padding:24px;
+        }
+        .yongding-bg{
+            flex:1;
+            height:80vh;
+            border:1px solid gold;
+            position:relative;
+        }
+        .overlay-plan{
+            position:absolute;
+            inset:0;
+            background:rgba(255,240,150,0.25);
+        }
+        .right-text{
+            width:40%;
+            padding-left:20px;
+        }
+
+        /* 第7页 致谢 */
+        #page7{
+            background:#301212;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+        }
+        .hand-write{
+            font-family:KaiTi,cursive;
+            font-size:26px;
+            color:#ffd700;
+            opacity:0;
+            transition:opacity 1.2s;
+            text-align:center;
+            line-height:2.4;
+            max-width:85%;
+        }
+        #page7.show-hand .hand-write{
+            opacity:1;
+        }
+        .thanks-text{
+            margin-top:40px;
+            font-family:SimSun,serif;
+            font-size:28px;
+            color:#fff;
+            opacity:0;
+        }
+        #page7.show-thanks .thanks-text{
+            opacity:1;
+        }
+        .footer-bar{
+            position:absolute;
+            bottom:24px;
+            width:92%;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+        .btn-restart{
+            padding:10px 22px;
+            background:#b41414;
+            color:#ffd700;
+            border:none;
+            font-size:18px;
+            border-radius:6px;
+        }
+        .qrcode-box{
+            width:80px;
+            height:80px;
+            border:1px solid gold;
+            color:#ffd700;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:12px;
+        }
+    </style>
+</head>
+<body>
+<div id="h5-wrap">
+    <!-- 页面1 封面 -->
+    <div class="page active" id="page1">
+        <div class="title-vertical">中轴同心——北京中轴线</div>
+        <div class="arrow-down">↑</div>
+    </div>
+
+    <!-- 页面2 简介 -->
+    <div class="page" id="page2">
+        <div class="text-box">
+            <p class="text-gold">北京中轴线始建于13世纪元大都，16世纪明清时期形成今日格局，历经七个多世纪，是中华民族共有精神家园的集中体现。其对称格局承载“居中而治、贵中尚和”的哲学追求，串联起家国同构的礼仪秩序。从古至今，这条轴线延续着共同的文化记忆与身份认同，成为凝聚民族情感的精神纽带。</p>
+        </div>
+        <div class="map-placeholder">中轴线示意图</div>
+    </div>
+
+    <!-- 页面3 钟鼓楼 -->
+    <div class="page" id="page3">
+        <p class="type-text">钟鼓楼，中轴线最北端。明清两代，这里管着全城的时间。敲法有讲究——‘紧十八，慢十八，不紧不慢又十八’，两遍，一百零八声。古人用一百零八代表一年：十二月、二十四节气、七十二候，加起来正好。是中华民族平安富足度过年年岁岁的淳朴愿望。</p>
+    </div>
+
+    <!-- 页面4 太庙 社稷坛 -->
+    <div class="page" id="page4">
+        <div class="col-half">
+            <div class="img-placeholder">太庙图片</div>
+        </div>
+        <div class="col-half">
+            <div class="img-placeholder">社稷坛图片</div>
+        </div>
+        <div class="center-text">太庙与社稷坛分列中轴线东西，是“左祖右社”古制的核心体现。左侧太庙用于祭祖，表现中华民族对于祖先的崇拜；右侧社稷坛用于祈求五谷丰登，表现了中华民族对于自然的敬畏以及富足、美好生活的向往。</div>
+    </div>
+
+    <!-- 页面5 故宫画轴 -->
+    <div class="page" id="page5">
+        <div class="scroll-wrap">
+            <div class="scroll-paper">
+                <div class="scroll-text">故宫是中轴线的心脏，是古代政权的中心。1925年，故宫博物院成立，它从‘天子居所’变成了‘大家的博物院’。今天，每年有一千七百多万人从世界各地来到这里。有人来看建筑，有人来看文物，有人只是来走一走——走一走这条走了六百年的路。故宫是北京的心脏，北京是中国的中心。这个‘中’，不是地理意义上的中间，是所有人心里都认的那个‘中’。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页面6 永定门 -->
+    <div class="page" id="page6">
+        <div class="yongding-bg">
+            <div class="overlay-plan"></div>
+        </div>
+        <div class="right-text">
+            <p class="text-gold">永定门是北京中轴线的最南端，也是五十六个民族团结跑奖牌的主题图案，是五十六个民族齐心协力、齐头并进的象征。</p>
+        </div>
+    </div>
+
+    <!-- 页面7 致谢 -->
+    <div class="page" id="page7">
+        <div class="hand-write">一条线，七百年，从永定门到钟鼓楼，走过它的人，来自四面八方；站在它上面的人，只有一个名字：中华儿女。</div>
+        <div class="thanks-text">感谢观看</div>
+        <div class="footer-bar">
+            <button class="btn-restart">重看一遍</button>
+            <div class="qrcode-box">分享二维码</div>
+        </div>
+    </div>
+</div>
+
+<script>
+const pages = document.querySelectorAll('.page');
+let currentPageIndex = 0;
+const totalPage = 7;
+
+// 切换页面
+function goPage(index){
+    if(index<0 || index>=totalPage) return;
+    pages[currentPageIndex].classList.remove('active');
+    currentPageIndex = index;
+    pages[currentPageIndex].classList.add('active');
+
+    //第七页触发手写文字动画
+    if(currentPageIndex === 6){
+        setTimeout(()=>{
+            document.querySelector("#page7").classList.add("show-hand");
+        },600);
+    }
+}
+
+//第一页箭头点击翻页
+document.querySelector('.arrow-down').addEventListener('click',()=>{
+    goPage(1);
+});
+
+//第7页点击任意处显示感谢观看
+document.querySelector("#page7").addEventListener('click',()=>{
+    document.querySelector("#page7").classList.add("show-thanks");
+});
+
+//重看按钮回到第1页
+document.querySelector(".btn-restart").addEventListener("click",()=>{
+    document.querySelector("#page7").classList.remove("show-hand","show-thanks");
+    goPage(0);
+});
+
+// 左右滑动手势，模拟向左拖动翻页（文档需求：向左拖动页面跳转下一页）
+let touchStartX = 0;
+document.body.addEventListener('touchstart',e=>{
+    touchStartX = e.touches[0].clientX;
+});
+document.body.addEventListener('touchend',e=>{
+    const endX = e.changedTouches[0].clientX;
+    const diffX = touchStartX - endX;
+    //向左滑动>60px翻下一页
+    if(diffX>60){
+        goPage(currentPageIndex+1);
+    }
+})
+
+//电脑端鼠标拖拽模拟向左滑动
+let mouseStartX = null;
+document.body.addEventListener("mousedown",e=>{
+    mouseStartX = e.clientX;
+})
+document.body.addEventListener("mouseup",e=>{
+    if(mouseStartX === null) return;
+    const dx = mouseStartX - e.clientX;
+    if(dx>80){
+        goPage(currentPageIndex+1);
+    }
+    mouseStartX = null;
+})
+</script>
+</body>
+</html>
+<!-- （注：内容由AI生成） -->
